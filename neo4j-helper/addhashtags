@@ -1,0 +1,5 @@
+call apoc.periodic.iterate('
+MATCH (n:User)-[r]->(m:Tweet) return n,m.hashtags as hashtags
+','
+SET n.hashtags = n.hashtags + hashtags
+', {batchSize:10000,iterateList:true});

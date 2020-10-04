@@ -1,0 +1,19 @@
+CALL apoc.periodic.iterate("
+    CALL apoc.load.json('file:///var/lib/neo4j/import/tweetnodes_new.json')
+    YIELD value AS lines RETURN lines
+", "
+
+FOREACH(line IN lines |
+
+    MERGE (a:Tweet { tweetId: toInteger(line.tweetId)})
+	ON CREATE SET a.tweetText=line.tweetText, 
+	a.hashtags=line.hashtags, 
+	a.userId= toInteger(line.userId), 
+	a.urls= line.urls,
+	a.mentions= line.mentions
+)",
+{
+    batchSize: 5000,
+    iterateList: true
+}
+);	

@@ -1,0 +1,15 @@
+CALL apoc.periodic.iterate("
+    CALL apoc.load.json('file:///var/lib/neo4j/import/tweets.json')
+    YIELD value AS lines RETURN lines
+", "
+	UNWIND lines AS line 
+	MATCH (a:User {id_str:line.from})
+	MATCH (b:User {id_str:line.to})
+	MERGE (a)-[r:RETWEETED{new_tweet:line.new_tweet_id,old_tweet:line.old_tweet_id}]->(b)
+
+",
+{
+    batchSize: 5000,
+    iterateList: true
+}
+);

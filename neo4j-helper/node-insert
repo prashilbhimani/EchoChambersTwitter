@@ -1,0 +1,26 @@
+CALL apoc.periodic.iterate("
+    CALL apoc.load.json('file:///var/lib/neo4j/import/data1.json')
+    YIELD value AS lines RETURN lines
+", "
+
+FOREACH(line IN lines |
+
+    MERGE (a:User { id_str: line.id_str})
+	ON CREATE SET a.screen_name=line.screen_name, 
+	a.verified=line.verified, 
+	a.followers_count= toInteger(line.followers_count), 
+	a.friends_count= toInteger(line.friends_count),
+	a.statuses_count= toInteger(line.statuses_count),
+	a.country_code= line.country_code,
+	a.tweets_text=line.tweets_text,
+	a.tweets_ids=line.tweets_ids,
+	a.hashtags=line.hashtags,
+	a.urls=line.urls,
+	a.user_mentions=line.user_mentions
+
+)",
+{
+    batchSize: 10000,
+    iterateList: true
+}
+);	

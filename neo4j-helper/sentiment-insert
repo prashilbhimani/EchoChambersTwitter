@@ -1,0 +1,15 @@
+CALL apoc.periodic.iterate("
+    CALL apoc.load.json('file:///var/lib/neo4j/import/test.json')
+    YIELD value AS lines RETURN lines
+", "
+	UNWIND lines AS line 
+	MATCH (n:User)
+	WHERE n.id_str=line.tweets_ids
+	SET n.sentiment = line.sentiment
+	return n
+",
+{
+    batchSize: 10000,
+    iterateList: true
+}
+);

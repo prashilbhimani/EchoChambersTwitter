@@ -1,0 +1,162 @@
+MATCH (a:User),(b:User) 
+WHERE a.id_str = "392414460" AND b.id_str = "112030336"
+CREATE (a)-[r:RETWEETED{new_tweet:"1234567890",old_tweet:"0987654321"}]->(b) 
+RETURN r
+
+
+curl -X POST -H 'Content-type: application/json' http://neo4j:comm@ip_here:7474/db/data/transaction/commit -d '{"statements": [{"statement": "MATCH (n) RETURN n;"}]}'
+
+
+curl -H accept:application/json -H content-type:application/json \
+     -d '{"statements":[{"statement":"MATCH (p1:PROFILES)-[:RELATION]-(p2) RETURN ... LIMIT 4"}]}' \
+     http://localhost:7474/db/data/transaction/commit
+112030336
+
+old=392414460
+new=112030336
+
+
+curl -X POST -H 'Content-type: application/json' http://neo4j:comm@35.231.74.19:7474/db/data/transaction/commit -d "{\"statements\": [{\"statement\": \"MATCH (a:User),(b:User) WHERE a.id_str = '$old' AND b.id_str = '$new' CREATE (a)-[r:RETWEETED{new_tweet: '1234',old_tweet: '121'}]->(b) RETURN r \"}]}"
+
+
+
+# {
+# "_scroll_id":"DnF1ZXJ5VGhlbkZldGNoBQAAAAAAAAAkFmgyem8yNFZjU0dLSGJtb2p3VlBwencAAAAAAAAAJRZoMnpvMjRWY1NHS0hibW9qd1ZQcHp3AAAAAAAAACYWaDJ6bzI0VmNTR0tIYm1vandWUHB6dwAAAAAAAAAnFmgyem8yNFZjU0dLSGJtb2p3VlBwencAAAAAAAAAKBZoMnpvMjRWY1NHS0hibW9qd1ZQcHp3",
+# "took":2,
+# "timed_out":false,
+# "_shards":{"total":5,"successful":5,"skipped":0,"failed":0},
+# "hits":{
+# 	"total":47134,
+# 	"max_score":1.0,
+# 	"hits":[
+# 		{"_index":"users","_type":"users","_id":"bDtPY2cBF1GlzI5oGD0Q","_score":1.0,"_source":{"uniqueusers":"867221167509262339"}},
+# 		{"_index":"users","_type":"users","_id":"bTtPY2cBF1GlzI5oGD0Q","_score":1.0,"_source":{"uniqueusers":"752151169166823424"}},
+# 		{"_index":"users","_type":"users","_id":"bztPY2cBF1GlzI5oGD0Q","_score":1.0,"_source":{"uniqueusers":"765291499"}},
+# 		{"_index":"users","_type":"users","_id":"eDtPY2cBF1GlzI5oGD0Q","_score":1.0,"_source":{"uniqueusers":"3278682020"}},
+# 		{"_index":"users","_type":"users","_id":"fDtPY2cBF1GlzI5oGD0Q","_score":1.0,"_source":{"uniqueusers":"2416876214"}}
+# 		]
+# 	}
+# }
+
+
+# curl -X POST "localhost:9200/_search/scroll" -H 'Content-Type: application/json' -d'{"scroll" : "10m", 
+#     "scroll_id" : "DnF1ZXJ5VGhlbkZldGNoBQAAAAAAAAAqFmgyem8yNFZjU0dLSGJtb2p3VlBwencAAAAAAAAAKRZoMnpvMjRWY1NHS0hibW9qd1ZQcHp3AAAAAAAAACsWaDJ6bzI0VmNTR0tIYm1vandWUHB6dwAAAAAAAAAsFmgyem8yNFZjU0dLSGJtb2p3VlBwencAAAAAAAAALRZoMnpvMjRWY1NHS0hibW9qd1ZQcHp3" 
+# }
+# '
+
+# {"_scroll_id":"GetThis","took":2,"timed_out":false,"_shards":{},"hits":{"total":100,"max_score":1.0,"hits":[]}}
+
+# | jq '._scroll_id'
+# | jq '.hits.hits'
+
+# jq -n --arg inarr "${ARR}" '{ arr: $inarr | split("\n") }'
+
+# x= 
+# for row in $(echo "" | jq -r '.[] | @base64'); do
+#     _jq() {
+#      echo ${row} | base64 --decode | jq -r ${1}
+#     }
+
+#    echo $(_jq '.name')
+# done
+
+MATCH (u:User)
+RETURN u.partition as partition,count(*) as size_of_partition
+ORDER by size_of_partition DESC
+LIMIT 20;
+
+
+MATCH (u:User)
+RETURN u.community as community,count(*) as size_of_partition
+ORDER by size_of_partition DESC
+LIMIT 100;
+
+
+
+MATCH (p)
+WHERE  p.connected_component_number<>257106
+DETACH DELETE p
+
+MATCH (p:User)
+RETURN p.community_with_all_nodes , count(*) as size ORDER BY size DESC  LIMIT 42
+
+MATCH (p:User)
+WHERE NOT  (p)-[:CREATED]->()
+RETURN count(*)
+
+//Clean nodes - Partition is not max
+//Find a way to subset graph for community - 1000+
+
+Max user edges 
+Max user tweets
+Users with only retweets =match (n:User) where n.retweet_count=length(n.tweets_ids)-1  return n.screen_name
+
+
+258941
+222082
+
+
+User -Created-> Tweet
+User -Retweeted-> Tweet
+Tweet -Quoted-> Tweet
+
+
+MATCH (a:PERSON),(b:PERSON),(r:Movie) where (a)-[:DIRECTED]->(r:Movie)<-[:ACTED_IN]-(b) return a.name,b.name, COUNT(r) LIMIT 1
+
+
+MATCH (u:User)
+WHERE u.community_with_all_nodes=20
+return collect(u.u_tags)
+
+
+MATCH (n:User {community_with_all_nodes:9})
+with collect(n) as p
+with [k in p| k.u_tags] as tags
+UNWIND tags as t
+UNWIND t as x
+RETURN DISTINCT x
+
+
+
+0<-0	0
+1<-1	1
+1<-3	2
+1<-8	6
+1<-13	7
+1<-20	9
+1<-28	11
+1->32	13
+1<-35	14
+1<-43	15
+1<-75	18
+1<-76	19
+2<-4	3
+3<-5	4
+4<-6	5
+5<-19	8
+6<-22	10
+7<-30	12
+8->47	16
+9<-48	17
+
+
+
+call apoc.periodic.iterate('
+match (u:User),(v:User)
+where (u)-->(v) and u.focusComm <>-1 and v.focusComm <>-1
+return u,v
+','
+set u.interactionCount[v.focusComm]=u.interactionCount[v.focusComm]+1
+',{batchSize:10000, iterateList:true}
+)
+
+
+call apoc.periodic.iterate('
+match (u:User),(v:User)
+where (u)-[:RETWEETINTERACTION|MENTIONSINTERACTION|QUOTEDINTERACTION]->(v) and u.focusComm <>-1 and v.focusComm <>-1
+return u,v
+','
+where u.focusComm<>v.focusComm
+set u.totalCount=u.totalCount+1
+',{batchSize:10000, iterateList:true}
+)

@@ -1,0 +1,3 @@
+{"sentiment":2.1448275862068966,"tweets_text":"RT @GlobalGoalsUN: Climate change is real &amp; demands action. Our economies &amp; security depend on it. #ParisAgreement is just the start. https\u2026","tweets_ids":"870415267813244928"}	
+{"sentiment":1.0909090909090908,"tweets_text":"RT @antonioguterres: It's essential that the world implements the #ParisAgreement &amp; fulfils that duty with increased ambition. hyhbchyynrjnjnynyfhnynynjnujunufuununununununununu","tweets_ids":"870415268849344516"}
+

@@ -1,0 +1,15 @@
+CALL apoc.periodic.iterate("
+    CALL apoc.load.json('file:///var/lib/neo4j/import/quoted_relations_new.json')
+    YIELD value AS lines RETURN lines
+", "
+	UNWIND lines AS line 
+	MATCH (a:Tweet {tweetId:toInteger(line.tweet)})
+	MATCH (b:Tweet {tweetId:toInteger(line.ogtweet)})
+	MERGE (a)-[r:QUOTED]->(b)
+
+",
+{
+    batchSize: 5000,
+    iterateList: true
+}
+);

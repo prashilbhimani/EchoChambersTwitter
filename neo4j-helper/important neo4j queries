@@ -1,0 +1,46 @@
+Prashil Bhimani [3:48 PM]
+"MATCH (a:User),(b:User)"+
+"WHERE a.id_str = {x1} AND b.id_str = {x2}"+
+"CREATE (a)-[r:RETWEETED{new_tweet:{t1},old_tweet:{t2}}]->(b)"
+RETURN r
+'''
+
+StatementResult result = tx.run("MATCH (a:User),(b:User)"+
+"WHERE a.id_str = {x1} AND b.id_str = {x2}"+
+"CREATE (a)-[r:RETWEETED{new_tweet:{t1},old_tweet:{t2}}]->(b)"
+    							, parameters("x1", id_str1,"x2",id_str2,"t1",new_tweet,"t2",old_tweet));
+
+
+MATCH (a:User),(b:User)
+WHERE a.id_str = "" AND b.id_str = {x2}"+
+                        			"MERGE (a)-[r:RETWEETED{new_tweet:{t1},old_tweet:{t2}}]->(b)"
+
+RETURN EXISTS( (:User {id_str: "392414460"})-[:RETWEETED]-(:User {id_str: "112030336") )
+
+
+RETURN EXISTS( (:User{id_str: "392414460"}) ) 
+
+
+MATCH (n)<-[r]->(m) WHERE n.id_str = '392414460' AND m.id_str = "112030336" RETURN COUNT(r)
+
+http://35.231.74.19:7474/browser/
+
+MATCH (:User {id_str: "392414460"})-[r:RETWEETED]-(:User {id_str: "112030336"})
+DELETE r
+
+
+USING PERIODIC COMMIT 5000
+LOAD CSV WITH HEADERS FROM 'https://storage.googleapis.com/pub_bucket_01/data2.csv' AS line
+MERGE (a:User { id_str: line.id_str})
+ON CREATE SET a.screen_name=line.screen_name, 
+a.verified=line.verified, 
+a.followers_count= toInteger(line.followers_count), 
+a.friends_count= toInteger(line.friends_count),
+a.statuses_count= toInteger(line.statuses_count),
+a.country_code= line.country_code,
+a.tweets_text=line.tweets_text,
+a.tweets_ids=line.tweets_ids,
+a.hashtags=line.hashtags,
+a.urls=line.urls,
+a.user_mentions=line.user_mentions;
+
